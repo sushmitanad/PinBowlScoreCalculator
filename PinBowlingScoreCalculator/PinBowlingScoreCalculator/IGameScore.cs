@@ -5,6 +5,6 @@ namespace PinBowlingScoreCalculator
 {
     public interface IGameScore
     {
-        Task<int> CalculateScore(GameFrame gameFrame);
+        Task<int> CalculateScore();
     }
 }
