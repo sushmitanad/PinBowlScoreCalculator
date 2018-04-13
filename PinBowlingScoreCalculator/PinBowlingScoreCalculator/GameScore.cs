@@ -12,7 +12,6 @@ namespace PinBowlingScoreCalculator
         public GameScore(GameFrame gameFrame)
         {
             this.gameFrame = gameFrame;
-            SetFrameTypes();
         }
 
         private void SetFrameTypes()
@@ -30,13 +29,22 @@ namespace PinBowlingScoreCalculator
 
         public async Task<int> CalculateScore()
         {
-            for (var frameIndex = 0; frameIndex < Constants.FramesPerGame - 1; frameIndex++)
+            try
             {
-                var frame = gameFrame.frames[frameIndex];
-                gameFrame.TotalScore += GetCurrentFrameScore(frame);
+                SetFrameTypes();
+
+                for (var frameIndex = 0; frameIndex < Constants.FramesPerGame - 1; frameIndex++)
+                {
+                    var frame = gameFrame.frames[frameIndex];
+                    gameFrame.TotalScore += GetCurrentFrameScore(frame);
+                }
+                gameFrame.TotalScore += GetLastFrameScore();
+                return gameFrame.TotalScore;
             }
-            gameFrame.TotalScore += GetLastFrameScore();
-            return gameFrame.TotalScore;
+            catch(Exception ex)
+            {
+                throw;
+            }
         }
 
         private int GetCurrentFrameScore(Frame currentFrame)
