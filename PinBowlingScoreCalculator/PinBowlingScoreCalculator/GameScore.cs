@@ -56,7 +56,8 @@ namespace PinBowlingScoreCalculator
             else
             {
                 foreach (var ballThrow in currentFrame.CurrentBowlScore)
-                    frameScore += int.Parse(ballThrow);
+                    if (!string.Equals(ballThrow, Constants.NoScoreChar, StringComparison.CurrentCultureIgnoreCase))
+                        frameScore += int.Parse(ballThrow);
             }
 
             return frameScore;
@@ -73,9 +74,13 @@ namespace PinBowlingScoreCalculator
 
             if (nextFrame.IsStrike) return Constants.StrikeScore;
 
-            if (nextFrame.IsSpare) return Constants.SpareBonus;
+            if (nextFrame.IsSpare) return Constants.SpareScore;
 
-            return int.Parse(nextFrame.CurrentBowlScore[0]);
+            var nextThrowChar = nextFrame.CurrentBowlScore[0];
+            if (string.Equals(nextThrowChar, Constants.NoScoreChar, StringComparison.CurrentCultureIgnoreCase))
+                return 0;
+
+            return int.Parse(nextThrowChar);
         }
 
         private int GetStrikeBonus(Frame currentFrame)
@@ -101,7 +106,11 @@ namespace PinBowlingScoreCalculator
             if (!lastFrame.IsStrike && !lastFrame.IsSpare)
             {
                 for (var throwIndex = 0; throwIndex < Constants.ThrowsPerFrame; throwIndex++)
-                    frameScore += int.Parse(lastFrame.CurrentBowlScore[throwIndex]);
+                {
+                    var throwChar = lastFrame.CurrentBowlScore[throwIndex];
+                    if (!string.Equals(throwChar, Constants.NoScoreChar, StringComparison.CurrentCultureIgnoreCase))
+                        frameScore += int.Parse(throwChar);
+                }
             }
             else
             {
@@ -115,7 +124,7 @@ namespace PinBowlingScoreCalculator
                     frameScore += Constants.StrikeScore;
                 else if (string.Equals(bonusScoreChar, Constants.SpareChar, StringComparison.CurrentCultureIgnoreCase))
                     frameScore += Constants.SpareScore;
-                else
+                else if (!string.Equals(bonusScoreChar, Constants.NoScoreChar, StringComparison.CurrentCultureIgnoreCase))
                     frameScore += int.Parse(bonusScoreChar);
             }
 

@@ -9,6 +9,7 @@ namespace PinBowlingScoreCalculator.Models
         public const int SpareScore = 10;
         public const string StrikeChar = "X";
         public const string SpareChar = "/";
+        public const string NoScoreChar = "-";
         public const int StrikeBonus = 2;
         public const int SpareBonus = 1;
     }
