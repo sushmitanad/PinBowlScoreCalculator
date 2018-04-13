@@ -74,7 +74,7 @@ namespace PinBowlingScoreCalculator
 
             if (nextFrame.IsStrike) return Constants.StrikeScore;
 
-            if (nextFrame.IsSpare) return Constants.SpareScore;
+            if (nextFrame.IsSpare && currentFrame.IsStrike) return Constants.StrikeScore;
 
             var nextThrowChar = nextFrame.CurrentBowlScore[0];
             if (string.Equals(nextThrowChar, Constants.NoScoreChar, StringComparison.CurrentCultureIgnoreCase))
