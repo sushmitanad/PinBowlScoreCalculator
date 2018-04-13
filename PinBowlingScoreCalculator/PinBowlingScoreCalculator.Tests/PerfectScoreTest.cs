@@ -13,9 +13,9 @@ namespace PinBowlingScoreCalculator.Tests
         {
             var frames = new List<Frame>();
             for (int i = 0; i < 10; i++)
-                frames.Add(new Frame { CurrentBowlScore = new string[] { string.Empty, "x" } });
+                frames.Add(new Frame { CurrentBowlScore = new List<string>(new[] { string.Empty, "x" }) });
             frames[9].CurrentBowlScore[0] = "x";
-            frames[9].BonusScore = "x";
+            frames[9].CurrentBowlScore.Add("x");
             var gameFrame = new GameFrame
             {
                 FrameId = Guid.NewGuid(),
