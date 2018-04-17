@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PinBowlingScoreCalculator.Models
 {
@@ -13,6 +14,11 @@ namespace PinBowlingScoreCalculator.Models
 
         public bool IsBonus { get; set; } = false;
 
-        public List<string> CurrentBowlScore { get; set; } = new List<string>(Constants.ThrowsPerFrame);
+        public List<string> CurrentBowlScore { get; set; } = new List<string>();
+
+        public Frame()
+        {
+            CurrentBowlScore.AddRange(Enumerable.Repeat(Constants.DefaultThrowValue.ToString(), Constants.ThrowsPerFrame));
+        }
     }
 }

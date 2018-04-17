@@ -9,6 +9,6 @@ namespace PinBowlingScoreCalculator.Models
 
         public int TotalScore { get; set; } = 0;
 
-        public List<Frame> frames = new List<Frame>(Constants.FramesPerGame);
+        public List<Frame> Frames { get; set; } = new List<Frame>();
     }
 }

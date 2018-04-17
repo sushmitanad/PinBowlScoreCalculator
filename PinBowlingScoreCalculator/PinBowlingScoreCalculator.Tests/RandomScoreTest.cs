@@ -8,41 +8,33 @@ namespace PinBowlingScoreCalculator.Tests
 {
     public class RandomScoreTest
     {
-        private readonly IGameScore gameScore;
-
-        public RandomScoreTest()
+        [Fact]
+        public void CheckIfScoreCalculatedIsPerfect()
         {
-            var frames = new List<Frame>
-            {
-                new Frame { CurrentBowlScore = new List<string>(new[] { "", "x" }) },
-                new Frame { CurrentBowlScore = new List<string>(new[] { "9", "/" }) },
-                new Frame { CurrentBowlScore = new List<string>(new[] { "5", "/" }) },
-                new Frame { CurrentBowlScore = new List<string>(new[] { "7", "2" }) },
-                new Frame { CurrentBowlScore = new List<string>(new[] { "", "x" }) },
-                new Frame { CurrentBowlScore = new List<string>(new[] { "", "x" }) },
-                new Frame { CurrentBowlScore = new List<string>(new[] { "", "x" }) },
-                new Frame { CurrentBowlScore = new List<string>(new[] { "9", "-" }) },
-                new Frame { CurrentBowlScore = new List<string>(new[] { "8", "/" }) },
-                new Frame { CurrentBowlScore = new List<string>(new[] { "9", "/", "x" }) }
-            };
-
-            var gameFrame = new GameFrame
-            {
-                FrameId = Guid.NewGuid(),
-                frames = frames
-            };
-
-            gameScore = new GameScore(gameFrame);
+            var game = new GameScore();
+            Roll(game, 0, 20);
+            Assert.Equal(187, game.GetScore());
         }
 
-        [Fact]
-        public async void ShouldGenerateExpectedScore()
+        private void Roll(GameScore game, int pins, int times)
         {
-            var expectedScore = 187;
-
-            var actualScore = await gameScore.CalculateScore();
-
-            Assert.Equal(expectedScore, actualScore);
+            game.Roll(10);
+            game.Roll(9);
+            game.Roll(1);
+            game.Roll(5);
+            game.Roll(5);
+            game.Roll(7);
+            game.Roll(2);
+            game.Roll(10);
+            game.Roll(10);
+            game.Roll(10);
+            game.Roll(9);
+            game.Roll(0);
+            game.Roll(8);
+            game.Roll(2);
+            game.Roll(9);
+            game.Roll(1);
+            game.Roll(10);
         }
     }
 }

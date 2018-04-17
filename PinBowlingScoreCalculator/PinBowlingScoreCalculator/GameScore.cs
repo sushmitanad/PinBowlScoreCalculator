@@ -1,47 +1,108 @@
 ﻿using PinBowlingScoreCalculator.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
+
 namespace PinBowlingScoreCalculator
 {
     public class GameScore : IGameScore
     {
-        private readonly GameFrame gameFrame;
+        private readonly List<int> throws;
+        private readonly GameFrame gameFrame = new GameFrame();
 
-        public GameScore(GameFrame gameFrame)
+        public GameScore()
         {
-            this.gameFrame = gameFrame;
+            throws = new List<int>(Constants.MaximumThrowsPossible);
+            throws.AddRange(Enumerable.Repeat(Constants.DefaultThrowValue, Constants.MaximumThrowsPossible));
         }
 
-        private void SetFrameTypes()
+        public void Roll(int pins)
         {
-            foreach (var frame in gameFrame.frames)
+            // Add your logic here. Add classes as needed.
+            var currentIndex = throws.IndexOf(Constants.DefaultThrowValue);
+            throws[currentIndex] = pins;
+        }
+
+        private void SetFrames()
+        {
+            var currentThrowIndex = 0; var frameCount = 0;
+
+            while (throws[currentThrowIndex] != Constants.DefaultThrowValue)
             {
-                var endChar = frame.CurrentBowlScore[Constants.ThrowsPerFrame - 1];
-                if (string.Equals(endChar, Constants.StrikeChar, StringComparison.CurrentCultureIgnoreCase))
-                    frame.IsStrike = true;
-                if (string.Equals(endChar, Constants.SpareChar, StringComparison.CurrentCultureIgnoreCase))
-                    frame.IsSpare = true;
+                frameCount++;
+
+                if (frameCount == Constants.FramesPerGame) { SetLastFrame(currentThrowIndex); break; }
+
+                var currentFrame = new Frame();
+                var pinsKnocked = throws[currentThrowIndex];
+
+                if (pinsKnocked == Constants.StrikeScore)
+                {
+                    currentFrame.CurrentBowlScore[0] = string.Empty;
+                    currentFrame.CurrentBowlScore[1] = Constants.StrikeChar;
+                    currentFrame.IsStrike = true;
+                    gameFrame.Frames.Add(currentFrame); currentThrowIndex++;
+                    continue;
+                }
+
+                var pinsKnockedInNextThrow = throws[currentThrowIndex + 1];
+
+                currentFrame.CurrentBowlScore[0] = pinsKnocked.ToString();
+                currentFrame.CurrentBowlScore[1] = pinsKnockedInNextThrow.ToString();
+
+                if (pinsKnocked + pinsKnockedInNextThrow == Constants.SpareScore)
+                { currentFrame.CurrentBowlScore[1] = Constants.SpareChar; currentFrame.IsSpare = true; }
+
+                gameFrame.Frames.Add(currentFrame); currentThrowIndex += 2;
             }
-            gameFrame.frames[Constants.FramesPerGame - 1].IsLastFrame = true;
         }
 
-        public async Task<int> CalculateScore()
+        private void SetLastFrame(int currentThrowIndex)
+        {
+            var lastFrame = new Frame { IsLastFrame = true };
+            var pinsKnocked = throws[currentThrowIndex];
+            var pinsKnockedInNextThrow = throws[currentThrowIndex + 1];
+
+            lastFrame.CurrentBowlScore[0] = pinsKnocked.ToString();
+
+            if (pinsKnocked == Constants.StrikeScore)
+            {
+                lastFrame.CurrentBowlScore[1] = Constants.StrikeChar;
+                lastFrame.IsStrike = true;
+                var pinsKnockedInBonusThrow = throws[currentThrowIndex + 2] == Constants.StrikeScore
+                    ? Constants.StrikeChar : throws[currentThrowIndex + 2].ToString();
+                lastFrame.CurrentBowlScore.Add(pinsKnockedInBonusThrow);
+            }
+
+            else if (pinsKnocked + pinsKnockedInNextThrow == Constants.SpareScore)
+            {
+                lastFrame.CurrentBowlScore[1] = Constants.SpareChar;
+                lastFrame.IsSpare = true;
+                var pinsKnockedInBonusThrow = throws[currentThrowIndex + 2] == Constants.StrikeScore
+                    ? Constants.StrikeChar : throws[currentThrowIndex + 2].ToString();
+                lastFrame.CurrentBowlScore.Add(pinsKnockedInBonusThrow);
+            }
+
+            else lastFrame.CurrentBowlScore[1] = pinsKnockedInNextThrow.ToString();
+
+            gameFrame.Frames.Add(lastFrame);
+        }
+
+        public int GetScore()
         {
             try
             {
-                SetFrameTypes();
+                SetFrames();
 
                 for (var frameIndex = 0; frameIndex < Constants.FramesPerGame - 1; frameIndex++)
                 {
-                    var frame = gameFrame.frames[frameIndex];
+                    var frame = gameFrame.Frames[frameIndex];
                     gameFrame.TotalScore += GetCurrentFrameScore(frame);
                 }
                 gameFrame.TotalScore += GetLastFrameScore();
                 return gameFrame.TotalScore;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw;
             }
@@ -76,9 +137,9 @@ namespace PinBowlingScoreCalculator
 
             if (currentFrame.IsLastFrame) { nextFrame = null; return currentFrame.IsStrike ? Constants.StrikeScore : 0; }
 
-            var currentFrameIndex = gameFrame.frames.IndexOf(currentFrame);
+            var currentFrameIndex = gameFrame.Frames.IndexOf(currentFrame);
 
-            nextFrame = gameFrame.frames[currentFrameIndex + 1];
+            nextFrame = gameFrame.Frames[currentFrameIndex + 1];
 
             if (nextFrame.IsStrike) return Constants.StrikeScore;
 
@@ -108,7 +169,7 @@ namespace PinBowlingScoreCalculator
         private int GetLastFrameScore()
         {
             var lastFrameIndex = Constants.FramesPerGame - 1;
-            var lastFrame = gameFrame.frames[lastFrameIndex];
+            var lastFrame = gameFrame.Frames[lastFrameIndex];
             var frameScore = 0;
 
             if (!lastFrame.IsStrike && !lastFrame.IsSpare)

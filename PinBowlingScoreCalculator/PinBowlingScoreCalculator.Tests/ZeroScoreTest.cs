@@ -8,30 +8,20 @@ namespace PinBowlingScoreCalculator.Tests
 {
     public class ZeroScoreTest
     {
-        private readonly IGameScore gameScore;
-
-        public ZeroScoreTest()
+        [Fact]
+        public void CheckIfScoreCalculatedIsPerfect()
         {
-            var frames = new List<Frame>();
-            for (int i = 0; i < 10; i++)
-                frames.Add(new Frame { CurrentBowlScore = new List<string>(new[] { "-", "-" }) });
-            var gameFrame = new GameFrame
-            {
-                FrameId = Guid.NewGuid(),
-                frames = frames
-            };
-
-            gameScore = new GameScore(gameFrame);
+            var game = new GameScore();
+            Roll(game, 0, 20);
+            Assert.Equal(0, game.GetScore());
         }
 
-        [Fact]
-        public async void CheckIfScoreCalculatedIsZero()
+        private void Roll(GameScore game, int pins, int times)
         {
-            var expectedScore = 0;
-
-            var actualScore = await gameScore.CalculateScore();
-
-            Assert.Equal(expectedScore, actualScore);
+            for (int i = 0; i < times; i++)
+            {
+                game.Roll(pins);
+            }
         }
     }
 }

@@ -7,32 +7,20 @@ namespace PinBowlingScoreCalculator.Tests
 {
     public class PerfectScoreTest
     {
-        private readonly IGameScore gameScore;
-
-        public PerfectScoreTest()
+        [Fact]
+        public void CheckIfScoreCalculatedIsPerfect()
         {
-            var frames = new List<Frame>();
-            for (int i = 0; i < 10; i++)
-                frames.Add(new Frame { CurrentBowlScore = new List<string>(new[] { string.Empty, "x" }) });
-            frames[9].CurrentBowlScore[0] = "x";
-            frames[9].CurrentBowlScore.Add("x");
-            var gameFrame = new GameFrame
-            {
-                FrameId = Guid.NewGuid(),
-                frames = frames
-            };
-
-            gameScore = new GameScore(gameFrame);
+            var game = new GameScore();
+            Roll(game, 10, 12);
+            Assert.Equal(300, game.GetScore());
         }
 
-        [Fact]
-        public async void CheckIfScoreCalculatedIsPerfect()
+        private void Roll(GameScore game, int pins, int times)
         {
-            var expectedScore = 300;
-            
-            var actualScore = await gameScore.CalculateScore();
-
-            Assert.Equal(expectedScore, actualScore);
+            for (int i = 0; i < times; i++)
+            {
+                game.Roll(pins);
+            }
         }
     }
 }

@@ -12,5 +12,7 @@ namespace PinBowlingScoreCalculator.Models
         public const string NoScoreChar = "-";
         public const int StrikeBonus = 2;
         public const int SpareBonus = 1;
+        public const int MaximumThrowsPossible = 20;
+        public const int DefaultThrowValue = -1;
     }
 }
