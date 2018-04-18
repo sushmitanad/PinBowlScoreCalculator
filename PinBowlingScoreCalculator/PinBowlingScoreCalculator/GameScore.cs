@@ -39,7 +39,7 @@ namespace PinBowlingScoreCalculator
                 if (pinsKnocked == Constants.StrikeScore)
                 {
                     currentFrame.CurrentBowlScore[0] = string.Empty;
-                    currentFrame.CurrentBowlScore[1] = Constants.StrikeChar;
+                    currentFrame.CurrentBowlScore[1] = pinsKnocked.ToString();
                     currentFrame.IsStrike = true;
                     gameFrame.Frames.Add(currentFrame); currentThrowIndex++;
                     continue;
@@ -51,7 +51,7 @@ namespace PinBowlingScoreCalculator
                 currentFrame.CurrentBowlScore[1] = pinsKnockedInNextThrow.ToString();
 
                 if (pinsKnocked + pinsKnockedInNextThrow == Constants.SpareScore)
-                { currentFrame.CurrentBowlScore[1] = Constants.SpareChar; currentFrame.IsSpare = true; }
+                { currentFrame.IsSpare = true; }
 
                 gameFrame.Frames.Add(currentFrame); currentThrowIndex += 2;
             }
@@ -67,19 +67,17 @@ namespace PinBowlingScoreCalculator
 
             if (pinsKnocked == Constants.StrikeScore)
             {
-                lastFrame.CurrentBowlScore[1] = Constants.StrikeChar;
+                lastFrame.CurrentBowlScore[1] = pinsKnocked.ToString();
                 lastFrame.IsStrike = true;
-                var pinsKnockedInBonusThrow = throws[currentThrowIndex + 2] == Constants.StrikeScore
-                    ? Constants.StrikeChar : throws[currentThrowIndex + 2].ToString();
+                var pinsKnockedInBonusThrow = throws[currentThrowIndex + 2].ToString();
                 lastFrame.CurrentBowlScore.Add(pinsKnockedInBonusThrow);
             }
 
             else if (pinsKnocked + pinsKnockedInNextThrow == Constants.SpareScore)
             {
-                lastFrame.CurrentBowlScore[1] = Constants.SpareChar;
+                lastFrame.CurrentBowlScore[1] = pinsKnocked.ToString();
                 lastFrame.IsSpare = true;
-                var pinsKnockedInBonusThrow = throws[currentThrowIndex + 2] == Constants.StrikeScore
-                    ? Constants.StrikeChar : throws[currentThrowIndex + 2].ToString();
+                var pinsKnockedInBonusThrow = throws[currentThrowIndex + 2].ToString();
                 lastFrame.CurrentBowlScore.Add(pinsKnockedInBonusThrow);
             }
 
@@ -125,8 +123,7 @@ namespace PinBowlingScoreCalculator
             else
             {
                 foreach (var ballThrow in currentFrame.CurrentBowlScore)
-                    if (!string.Equals(ballThrow, Constants.NoScoreChar, StringComparison.CurrentCultureIgnoreCase))
-                        frameScore += int.Parse(ballThrow);
+                    frameScore += int.Parse(ballThrow);
             }
 
             return frameScore;
@@ -146,9 +143,6 @@ namespace PinBowlingScoreCalculator
             if (nextFrame.IsSpare && currentFrame.IsStrike) return Constants.StrikeScore;
 
             var nextThrowChar = nextFrame.CurrentBowlScore[0];
-            if (string.Equals(nextThrowChar, Constants.NoScoreChar, StringComparison.CurrentCultureIgnoreCase))
-                return 0;
-
             return int.Parse(nextThrowChar);
         }
 
@@ -177,8 +171,7 @@ namespace PinBowlingScoreCalculator
                 for (var throwIndex = 0; throwIndex < Constants.ThrowsPerFrame; throwIndex++)
                 {
                     var throwChar = lastFrame.CurrentBowlScore[throwIndex];
-                    if (!string.Equals(throwChar, Constants.NoScoreChar, StringComparison.CurrentCultureIgnoreCase))
-                        frameScore += int.Parse(throwChar);
+                    frameScore += int.Parse(throwChar);
                 }
             }
             else
@@ -188,13 +181,8 @@ namespace PinBowlingScoreCalculator
                 else
                     frameScore += Constants.SpareBonus * Constants.SpareScore;
 
-                var bonusScoreChar = lastFrame.CurrentBowlScore[Constants.ThrowsPerFrame - 1];
-                if (string.Equals(bonusScoreChar, Constants.StrikeChar, StringComparison.CurrentCultureIgnoreCase))
-                    frameScore += Constants.StrikeScore;
-                else if (string.Equals(bonusScoreChar, Constants.SpareChar, StringComparison.CurrentCultureIgnoreCase))
-                    frameScore += Constants.SpareScore;
-                else if (!string.Equals(bonusScoreChar, Constants.NoScoreChar, StringComparison.CurrentCultureIgnoreCase))
-                    frameScore += int.Parse(bonusScoreChar);
+                var bonusScoreChar = lastFrame.CurrentBowlScore[Constants.ThrowsPerFrame];
+                frameScore += int.Parse(bonusScoreChar);
             }
 
             return frameScore;
