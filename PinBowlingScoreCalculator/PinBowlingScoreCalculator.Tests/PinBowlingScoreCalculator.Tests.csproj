@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PinBowlingScoreCalculator.Models\PinBowlingScoreCalculator.Models.csproj" />
     <ProjectReference Include="..\PinBowlingScoreCalculator\PinBowlingScoreCalculator.csproj" />
   </ItemGroup>
 

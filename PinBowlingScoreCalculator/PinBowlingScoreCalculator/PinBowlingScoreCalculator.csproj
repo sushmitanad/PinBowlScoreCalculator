@@ -9,8 +9,4 @@
     <WarningsAsErrors />
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PinBowlingScoreCalculator.Models\PinBowlingScoreCalculator.Models.csproj" />
-  </ItemGroup>
-
 </Project>

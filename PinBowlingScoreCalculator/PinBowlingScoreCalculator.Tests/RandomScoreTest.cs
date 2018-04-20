@@ -1,8 +1,4 @@
-﻿using PinBowlingScoreCalculator.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
+﻿using Xunit;
 
 namespace PinBowlingScoreCalculator.Tests
 {
@@ -11,12 +7,12 @@ namespace PinBowlingScoreCalculator.Tests
         [Fact]
         public void CheckIfScoreCalculatedIsPerfect()
         {
-            var game = new GameScore();
+            var game = new Game();
             Roll(game, 0, 20);
             Assert.Equal(187, game.GetScore());
         }
 
-        private void Roll(GameScore game, int pins, int times)
+        private void Roll(Game game, int pins, int times)
         {
             game.Roll(10);
             game.Roll(9);
